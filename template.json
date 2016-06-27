@@ -1,0 +1,20 @@
+{
+	"templates": [{
+		"doctype": "ulb",
+		"tests": [
+                        "extensionCheck('.ulb')",
+			"verses()"
+		],
+		"transforms": [ {
+			"tool": "usfm2html",
+                        "source": "txt",
+                        "target": "html"
+                        }
+		]
+	}, {
+		"doctype": "story",
+		"transforms": [
+			"markdown2html"
+		]
+	}]
+}
