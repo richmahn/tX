@@ -13,17 +13,18 @@ import boto3
 
 from datetime import date
 from logging.handlers import RotatingFileHandler
-from flask import Flask, request, abort
+from flask import Flask, request, Response #, abort
 
 MAXJSON  = 10000
 
-# Identify file paths
+# define file paths
 baseDir  = '/var/www/vhosts/'
 toolsDir = baseDir + 'door43.org/tools/general_tools'
-outDir   = baseDir + 'webhook/output/'
-pagesDir = baseDir + 'webhook/data/'
+appDir   = baseDir + 'webhook/'
+workDir  = appDir  + 'data/'
+outDir   = appDir  + 'output/'
 logFile  = '/var/log/convert.log'
-bucket   = 's3://door43.org/u/'
+bucket   = 's3://door43.org/u/' # pusher repo hash fmt
 config   = '/root/.s3-convert.cfg'
 
 sys.path.append( toolsDir )
@@ -56,7 +57,7 @@ except:
 
 app.logger.info( "Using: " + sys.argv[ 2 ] )
 
-if sys.argv[ 2 ] == "gogs":
+if sys.argv[ 2 ] == "gogs": # get request from gogs
     @app.route( "/", methods=[ 'GET', 'POST' ] )  # bind to next function
     def index():
         if request.method == 'GET':
@@ -70,8 +71,11 @@ if sys.argv[ 2 ] == "gogs":
             payload = json.loads( request.data )
             res = proc( payload )
             app.logger.info( res )
+            #resp = app.make_response()
+            #resp.status = res
+            return Response( "Result" ), res 
 
-if sys.argv[ 2 ] == "sqs":
+if sys.argv[ 2 ] == "sqs": # get request from aws queue
     sqs = boto3.resource( 'sqs' )
 
     # Get the queue. This returns an SQS.Queue instance
@@ -95,26 +99,31 @@ if sys.argv[ 2 ] == "sqs":
         # Let the queue know that the message is processed
         message.delete()
 
-def proc( payload ):
+def proc( payload ): # process request from wherever
     repoName = payload['repository']['name']
-    app.logger.info( "  name: " + repoName )
 
     cloneUrl = payload['repository']['clone_url']
     app.logger.info( "  clone_url: " + cloneUrl )
 
-    localPath = pagesDir + repoName 
+    localPath = workDir + repoName 
     app.logger.info( "  localPath: " + localPath )
+
+    s = '/'
+    pusher = payload[ 'pusher' ][ 'username' ] + s
+    hash = payload[ 'commits' ][0][ 'id' ][:8] + s
+    dest =  pusher + repoName + s + hash 
+    app.logger.info( "dest: " + dest )
 
     # get collection from repo
     try:
         # setup git
-        if not os.path.exists( pagesDir ):
-            os.path.mkdirs( pagesDir, exist_ok=True )
+        if not os.path.exists( workDir ):
+            os.path.mkdirs( workDir, exist_ok=True )
     except:
-        app.logger.error( "Cannot access source directory: " + pagesDir ) 
-        app.logger.info( "  In: " + pagesDir )
+        app.logger.error( "Cannot access source directory: " + workDir ) 
+        app.logger.info( "  In: " + workDir )
   
-    os.chdir( pagesDir )
+    os.chdir( workDir )
 
     try: # git clone/pull
         if os.path.exists( repoName ): #  then pull
@@ -133,9 +142,9 @@ def proc( payload ):
 
     except:
         app.logger.error( "Cannot: " + cmd + ": " + cloneUrl )
-        return "FAIL"
+        return "501"
 
-    os.chdir( pagesDir + repoName )
+    os.chdir( workDir + repoName )
     app.logger.info( "  pwd: " + os.getcwd() )
 
     try: # look at repo manifest
@@ -150,7 +159,7 @@ def proc( payload ):
             manifest = json.loads( raw )
         else:
             app.logger.error( "No manifest for this repo." )
-            return "FAIL"
+            return "502"
 
         # Identify doc type
         inputFormat = manifest[ 'format' ]
@@ -161,33 +170,36 @@ def proc( payload ):
 
     except:
         app.logger.error( "Cannot parse manifest" )
-        return "FAIL"
+        return "503"
 
-    try:
-        # Find in template
+    try: # Find doctype in template then process per template
         isFound = False
         app.logger.info( "  looking for docType: " + docType )
 
         for item in templates[ 'templates']:
             app.logger.info( "  trying: " + item['doctype'] )
-
+            
             if item['doctype'] == docType:
-	        try:
-	            # Apply tests and transforms from template
+                app.logger.info( "  found: " + item['doctype'] )
+
+	        try: # Apply qualifying tests 
 	            for test in item[ 'tests' ]:
-		        app.logger.info( test )
+                        app.logger.info( test )
 		        #invoke test
 	        except:
 	            app.logger.warning( "  Cannot apply tests" )
 
-	        try:
+	        try: # apply transforms from template
 	            for trans in item[ 'transforms' ]:
-		        app.logger.info( trans )
-		        tool = trans[ 'tool' ]
-		        src = repoName + "." + trans[ 'source' ]
-		        tgt = outDir + repoName + "." + trans[ 'target' ]
-		        app.logger.info( 'cmd: ' + tool + " " + src + " " + tgt )
-		        #res = subprocess.check_output( tool, src, tgt )
+                        app.logger.info( trans )
+                        tool = appDir + "converters/" + trans[ 'tool' ]
+                        source = trans[ 'to' ]
+                        src = workDir + repoName 
+                        tgt = outDir + dest + source 
+                        cmd = tool + " -s " + src + " -d " + tgt 
+		        app.logger.info( 'cmd: ' + cmd )
+		        res = subprocess.check_output( cmd, shell=True )
+                        app.logger.info( res )
 		        src = tgt
 	        except:
 	            app.logger.warning( "  Cannot apply transforms" )
@@ -195,18 +207,18 @@ def proc( payload ):
 	        isFound = True
 	        break
        
-            if isFound == False:
-                app.logger.error( "Cannot find docType: " + docIdx )
-                return "FAIL"
+        if isFound == False:
+            app.logger.error( "Cannot find docType: " + docIdx )
+            return "504"
     
     except:
         app.logger.error( "No support for docType: " + docType )
-        return "FAIL"
+        return "505"
 
-    try:
-        # Upload to s3
+    try: # Upload to s3
         cfg = "-c " + config
-        cmd = "s3cmd put " + cfg + " -f " + tgt + " " + bucket  
+        outPath = bucket + dest 
+        cmd = "s3cmd put -r " + cfg + " -f " + tgt + " " + outPath   
         app.logger.info( cmd )
         res = subprocess.check_output( cmd, shell=True )
         app.logger.info( res )
@@ -214,9 +226,9 @@ def proc( payload ):
     
     except:
         app.logger.warning( "Cannot upload to s3" )
-        return "FAIL"
+        return "506"
 
-    return 'OK'
+    return '200'
 
 if __name__ == "__main__":
     try:

@@ -1,20 +1,32 @@
 {
-	"templates": [{
-		"doctype": "ulb",
-		"tests": [
-                        "extensionCheck('.ulb')",
-			"verses()"
-		],
-		"transforms": [ {
-			"tool": "usfm2html",
-                        "source": "txt",
-                        "target": "html"
-                        }
-		]
-	}, {
-		"doctype": "story",
-		"transforms": [
-			"markdown2html"
-		]
-	}]
+  "templates": [{
+    "doctype": "usfm",
+    "transforms": [ {
+      "to": "html",
+      "tool": "usfm/convert.py"
+      } ]
+    }, {        
+    "doctype": "obs",
+    "transforms": [ {
+      "to": "html",
+      "tool": "obs/convert.py"
+      } ]
+    }, {        
+    "doctype": "tA",
+    "transforms": [ {
+      "to": "html",
+      "tool": "md/convert.py"
+      } ]
+    }, {        
+    "doctype": "ulb",
+    "tests": [ {
+      "tool": "extensionCheck('.ulb')",
+      "tool": "verses()"
+      } ],
+    }, {
+    "doctype": "story",
+      "transforms": [
+        "markdown2html"
+      ]
+    }]
 }
