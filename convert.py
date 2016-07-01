@@ -101,6 +101,7 @@ if sys.argv[ 2 ] == "sqs": # get request from aws queue
 
 def proc( payload ): # process request from wherever
     repoName = payload['repository']['name']
+    app.logger.info( "  name: " + repoName )
 
     cloneUrl = payload['repository']['clone_url']
     app.logger.info( "  clone_url: " + cloneUrl )
@@ -199,8 +200,6 @@ def proc( payload ): # process request from wherever
                         cmd = tool + " -s " + src + " -d " + tgt 
 		        app.logger.info( 'cmd: ' + cmd )
 		        res = subprocess.check_output( cmd, shell=True )
-                        app.logger.info( res )
-		        src = tgt
 	        except:
 	            app.logger.warning( "  Cannot apply transforms" )
 
