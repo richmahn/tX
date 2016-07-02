@@ -199,7 +199,9 @@ def proc( payload ): # process request from wherever
                         tgt = outDir + dest + source
                         cmd = tool + " -s " + src + " -d " + tgt
                         app.logger.info( 'cmd: ' + cmd )
-                        res = subprocess.check_output( cmd, shell=True )
+                        res = subprocess.check_output( cmd, 
+                            stderr=subprocess.STDOUT,
+                            shell=True )
                         app.logger.info( 'result: ' + res )
                 except:
                     app.logger.warning( "  Cannot apply transforms" )
