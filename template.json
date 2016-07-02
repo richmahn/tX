@@ -3,7 +3,7 @@
     "doctype": "usfm",
     "transforms": [ {
       "to": "html",
-      "tool": "usfm/convert.py"
+      "tool": "usfm/convert_to_html.py"
       } ]
     }, {        
     "doctype": "obs",

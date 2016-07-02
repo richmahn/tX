@@ -193,13 +193,14 @@ def proc( payload ): # process request from wherever
                 try: # apply transforms from template
                     for trans in item[ 'transforms' ]:
                         app.logger.info( trans )
+                        #tool = "python " + appDir + "converters/" + trans[ 'tool' ]
                         tool = appDir + "converters/" + trans[ 'tool' ]
                         source = trans[ 'to' ]
                         src = workDir + repoName
                         tgt = outDir + dest + source
                         cmd = tool + " -s " + src + " -d " + tgt
                         app.logger.info( 'cmd: ' + cmd )
-                        res = subprocess.check_output( cmd, shell=True )
+                        res = subprocess.check_output( cmd, shell=False )
                         app.logger.info( 'result: ' + res )
                 except:
                     app.logger.warning( "  Cannot apply transforms" )
