@@ -3,9 +3,10 @@
 #
 # NAME convert.sh  -  Start conversion flask server
 #
-  USAGE="convert.sh -h|--help|log|restart|start|stop
+  USAGE="convert.sh -h|--help|install|log|restart|start|stop
   Where:
     -h|--help  Display this text
+    install    Make necessary run time directories
     log        Show current log in real time
     restart    Stop then start server process
     start      Start server process
@@ -43,8 +44,9 @@ case $1 in
   log) tail -f /var/log/convert.log ;;
   
   install) 
-    #baseDir=/var/www/vhosts/webhook
-    #cd $baseDir
+    cd $baseDir
+    mkdir -p $basedir/data
+    mkdir -p $baseDir/output
     #convDir=$baseDir/converters
     #obsDir=$convDir/obs/templates
     #taDir=$convDir/ta/templates
