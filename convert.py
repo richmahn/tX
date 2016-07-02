@@ -39,7 +39,7 @@ handler = RotatingFileHandler( logFile, maxBytes=1024 * 1024* 100, backupCount=5
 handler.setLevel( logging.INFO )
 app.logger.addHandler( handler )
 app.logger.info( "Start" )
-app.logger.info( t.strftime( "%H:%M:%S" )
+#app.logger.info( t.strftime( "%H:%M:%S" )
 
 try:
     from git_wrapper import *
