@@ -15,30 +15,32 @@
 
 baseDir=/var/www/vhosts/conv.door43.org
 
+start() {
+  cd $baseDir
+  python $baseDir/convert.py 9096 gogs >/var/log/convert.log 2>&1 < /dev/null &
+}
+
+stop() {
+  set x $(ps ax | grep -v grep | grep $baseDir/convert.py)
+
+  if [ $# -gt 2 ] ; then
+    kill $2
+  fi
+    
+  sleep 2
+}
+
+
 case $1 in
   -h|--help)
     echo "Usage: $USAGE"
     exit 0
     ;;
 
-  restart|stop)
-    set x $(ps ax | grep -v grep | grep $baseDir/convert.py)
-
-    if [ $# -gt 2 ] ; then
-      kill $2
-    fi
-    
-    sleep 2
-    ;;
-
-  restart|start)
-    cd $baseDir
-    python $baseDir/convert.py 9096 gogs >/var/log/convert.log 2>&1 < /dev/null &
-    ;;
-
-  log)
-    tail -f /var/log/convert.log
-    ;;
+  restart) stop ; start ;; 
+  stop) stop ;; 
+  start) start ;; 
+  log) tail -f /var/log/convert.log ;;
   
   install) 
     #baseDir=/var/www/vhosts/webhook
