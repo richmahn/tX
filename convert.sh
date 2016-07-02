@@ -55,7 +55,7 @@ case $1 in
   stop)    stop    ;; 
   start)   start   ;; 
   log)     log     ;;
-  init)    install  ; restart ; log ;;
+  init)    install  ; stop ; start ; log ;;
   install) install ;;
 
   "")
