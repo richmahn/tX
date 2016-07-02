@@ -45,6 +45,7 @@ case $1 in
   
   install) 
     mkdir -p -v $baseDir/{data,output} 
+    chmod +x $baseDir/converters/*/*.py
     cd $baseDir
     ;;
 
