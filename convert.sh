@@ -44,8 +44,8 @@ case $1 in
   log)     tail -n 100 -f /var/log/convert.log ;;
   
   install) 
+    mkdir -p -v $baseDir/{data,output} 
     cd $baseDir
-    mkdir -p -v $basedir/{data,output} 
     ;;
 
   "")
