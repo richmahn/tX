@@ -39,32 +39,13 @@ case $1 in
     ;;
 
   restart) stop ; start ;; 
-  stop) stop ;; 
-  start) start ;; 
-  log) tail -f /var/log/convert.log ;;
+  stop)    stop ;; 
+  start)   start ;; 
+  log)     tail -n 100 -f /var/log/convert.log ;;
   
   install) 
     cd $baseDir
-    mkdir -p $basedir/data
-    mkdir -p $baseDir/output
-    #convDir=$baseDir/converters
-    #obsDir=$convDir/obs/templates
-    #taDir=$convDir/ta/templates
-    #[ -f convert.sh ] && cp convert.sh $baseDir && chown root:root convert.sh
-    #[ -f convert.py ] && cp convert.py $baseDir && chown root:root convert.py
-    #[ -f template.json ] && cp template.json $baseDir
-    #
-    #[ -d $obsDir ] || mkdir -p $obsDir
-    #[ -f converters/obs/convert_to_html.py ] && \
-    #    cp converters/obs/convert_to_html.py  $baseDir/converters/obs && \
-    #    cp converters/obs/templates/* $baseDir/converters/obs/templates
-    #chmod +x $baseDir/converters/obs/convert_to_html.py
-    #
-    #[ -d $taDir ] || mkdir -p $taDir
-    #[ -f converters/ta/convert_to_html.py ] && \
-    #    cp converters/ta/convert_to_html.py  $baseDir/converters/ta && \
-    #    cp converters/ta/templates/* $baseDir/converters/ta/templates
-    #chmod +x $baseDir/converters/ta/convert_to_html.py
+    mkdir -p -v $basedir/{data,output} 
     ;;
 
   "")
