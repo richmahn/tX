@@ -3,7 +3,13 @@
 #
 # NAME convert.sh  -  Start conversion flask server
 #
-  USAGE="convert.sh -h|--help|restart|start|stop"
+  USAGE="convert.sh -h|--help|log|restart|start|stop
+  Where:
+    -h|--help  Display this text
+    log        Show current log in real time
+    restart    Stop then start server process
+    start      Start server process
+    stop       Kill server process"
 #
 ######################################################################
 
@@ -27,9 +33,11 @@ case $1 in
 
   restart|start)
     cd $baseDir
-    python $baseDir/convert.py 9096 gogs 2>&1 < /dev/null &
-    #python $baseDir/convert.py 9096 >/var/log/convert.log 2>&1 < /dev/null &
-    #tail -f /var/log/convert.log
+    python $baseDir/convert.py 9096 gogs >/var/log/convert.log 2>&1 < /dev/null &
+    ;;
+
+  log)
+    tail -f /var/log/convert.log
     ;;
   
   install) 
