@@ -24,7 +24,7 @@ install() {
 
 
 log() {
-  tail -n 100 -f /var/log/convert.log ;;
+  tail -n 100 -f /var/log/convert.log 
 }
 
 
@@ -51,19 +51,17 @@ case $1 in
     exit 0
     ;;
 
-  restart) stop    ; start ;; 
-  stop)    stop   ;; 
-  start)   start  ;; 
-  log)     log    ;;
-  init)    install ; restart ; log ;;
-  install)
-    install 
-    ;;
+  restart) stop     ; start ;; 
+  stop)    stop    ;; 
+  start)   start   ;; 
+  log)     log     ;;
+  init)    install  ; restart ; log ;;
+  install) install ;;
 
   "")
     echo "Missing action."
     echo "Usage: $USAGE"
-    exit
+    exit 1
     ;;
 
   *)
@@ -73,4 +71,4 @@ case $1 in
     ;;
 esac
 
-
+exit 0
