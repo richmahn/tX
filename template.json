@@ -1,5 +1,5 @@
 {
-  "templates": [{
+  "templates": [ {
     "doctype": "usfm",
     "transforms": [ {
       "to": "html",
@@ -9,24 +9,19 @@
     "doctype": "obs",
     "transforms": [ {
       "to": "html",
-      "tool": "obs/convert.py"
+      "tool": "obs/convert_to_html.py"
       } ]
     }, {        
     "doctype": "tA",
     "transforms": [ {
       "to": "html",
-      "tool": "md/convert.py"
+      "tool": "ta/convert_to_html.py"
       } ]
     }, {        
     "doctype": "ulb",
     "tests": [ {
       "tool": "extensionCheck('.ulb')",
       "tool": "verses()"
-      } ],
-    }, {
-    "doctype": "story",
-      "transforms": [
-        "markdown2html"
-      ]
-    }]
+      } ]
+    } ]
 }
