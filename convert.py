@@ -20,7 +20,7 @@ MAXJSON  = 10000
 # define file paths
 baseDir  = '/var/www/vhosts/'
 toolsDir = baseDir + 'door43.org/tools/general_tools'
-appDir   = baseDir + 'webhook/'
+appDir   = baseDir + 'conv.door43.org/'
 workDir  = appDir  + 'data/'
 outDir   = appDir  + 'output/'
 logFile  = '/var/log/convert.log'
