@@ -62,7 +62,7 @@ case $1 in
     ;;
 
   *)
-    echo "Invalid argument: $1)
+    echo "Invalid argument: $1"
     echo "Usage: $USAGE"
     exit 1
     ;;
