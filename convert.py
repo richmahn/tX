@@ -179,7 +179,7 @@ def proc( payload ): # process request from wherever
 
         for item in templates[ 'templates']:
             app.logger.info( "  trying: " + item['doctype'] )
-
+            
             if item['doctype'] == docType:
                 app.logger.info( "  found: " + item['doctype'] )
 

@@ -5,7 +5,7 @@
       "to": "html",
       "tool": "usfm/convert.py"
       } ]
-    }, {
+    }, {        
     "doctype": "obs",
     "transforms": [ {
       "to": "html",
