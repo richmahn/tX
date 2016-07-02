@@ -7,6 +7,8 @@
 #
 ######################################################################
 
+baseDir=/var/www/vhosts/conv.door43.org
+
 case $1 in
   -h|--help)
     echo "Usage: $USAGE"
@@ -14,7 +16,7 @@ case $1 in
     ;;
 
   restart|stop)
-    set x $(ps ax | grep -v grep | grep /var/www/vhosts/webhook/convert.py)
+    set x $(ps ax | grep -v grep | grep $baseDir/convert.py)
 
     if [ $# -gt 2 ] ; then
       kill $2
@@ -24,7 +26,6 @@ case $1 in
     ;;
 
   restart|start)
-    baseDir=/var/www/vhosts/webhook
     cd $baseDir
     python $baseDir/convert.py 9096 gogs 2>&1 < /dev/null &
     #python $baseDir/convert.py 9096 >/var/log/convert.log 2>&1 < /dev/null &
