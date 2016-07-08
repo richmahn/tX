@@ -157,6 +157,8 @@ def get_yaml_contents(yaml_file):
     f.close()
     return yml
 
+# Get the template code
+#
 def get_template_code():
     response = urllib2.urlopen(main_template_file)
     return response.read()
