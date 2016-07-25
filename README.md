@@ -1,3 +1,6 @@
+master | [![Build Status](https://travis-ci.org/unfoldingWord-dev/conv.door43.org.svg?branch=master)](https://travis-ci.org/unfoldingWord-dev/conv.door43.org)
+
+
 # conv.door43.org
 
 A conversion platform for the [Door43](http://door43.org) website.
