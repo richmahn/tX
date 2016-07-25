@@ -8,6 +8,7 @@ import re
 import codecs
 import getopt
 import json
+import urllib2
 
 # Globals
 #
@@ -15,7 +16,7 @@ current_dir = os.path.dirname(os.path.realpath(__file__))
 source_dir = ''
 destination_dir = ''
 image_api_url = 'https://api.unfoldingword.org/obs/jpg/1/'
-main_template_file = os.path.join(current_dir, 'templates/main.html')
+main_template_file = 'http://master.door43.org/templates/reveal.html'
 resolutions = ['360px', '2160px']
 ignoreDirectories = ['.git', '00']
 framesIgnoreFiles = ['.DS_Store', 'reference.txt', 'title.txt']
@@ -32,6 +33,9 @@ title_template = u'''<section><h1>{0}</h1><h3>{1}</h3></section>'''
 # template regex - uses Blade/Twig syntax
 #
 LANG_CODE_REGEX = re.compile(r"(\{{2}\s*LANG_CODE\s*\}{2})", re.DOTALL)
+HEADING_REGEX = re.compile(r"(\{{2}\s*HEADING\s*\}{2})", re.DOTALL)
+HOME_REGEX = re.compile(r"(\{{2}\s*HOME\s*\}{2})", re.DOTALL)
+HOME_LINK_REGEX = re.compile(r"(\{{2}\s*HOME_LINK\s*\}{2})", re.DOTALL)
 MENY_REGEX = re.compile(r"(\{{2}\s*MENY\s*\}{2})", re.DOTALL)
 REVEAL_SLIDES_REGEX = re.compile(r"(\{{2}\s*REVEAL_SLIDES\s*\}{2})", re.DOTALL)
 `1234`
@@ -46,7 +50,7 @@ res_paths = [[PATH_INDEX_REGEX, u'index.html', u'']]
 def usage():
     print ''
     print 'Usage:'
-    print '     convert_obs_repo.py [options]'
+    print '     convert_to_html.py [options]'
     print 'Options:'
     print '     -s --source [DIR] Source directory'
     print '     -d --destination [DIR] Destination directory'
@@ -153,6 +157,12 @@ def get_menu(chapters):
         i += 1
     return u'\n'.join(menu)
 
+# Get the template code
+#
+def get_template_code():
+    response = urllib2.urlopen(main_template_file)
+    return response.read()
+
 # Read the file
 #
 def read_file(infile):
@@ -187,7 +197,7 @@ def convert():
     language = get_language()
     chapters = get_chapters()
     meny = get_menu(chapters)
-    template = read_file(main_template_file)
+    template = get_template_code()
 
     for resolution in resolutions:
         if chapters:
@@ -213,6 +223,9 @@ def convert():
                 html = MENY_REGEX.sub(meny, template)
                 html = REVEAL_SLIDES_REGEX.sub('\n'.join(page), html)
                 html = LANG_CODE_REGEX.sub(language, html)
+                html = HEADING_REGEX.sub('Open Bible Stories: ' +chapter.get('title'), html)
+                html = HOME_REGEX.sub('Open Bible Stories Home', html)
+                html = HOME_LINK_REGEX.sub('https://unfoldingword.org/stories/', html)
 
                 # save the html
                 output_file = os.path.join(destination_dir, resolution, chapter.get('number'), 'index.html')

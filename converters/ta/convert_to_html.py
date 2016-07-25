@@ -35,7 +35,7 @@ page_dict = {}
 source_dir = ''
 destination_dir = ''
 current_dir = os.path.dirname(os.path.realpath(__file__))
-main_template_file = os.path.join(current_dir, 'templates/main.html')
+main_template_file = 'http://master.door43.org/templates/main.html'
 
 # template regex - uses Blade/Twig syntax
 #
@@ -157,6 +157,12 @@ def get_yaml_contents(yaml_file):
     f.close()
     return yml
 
+# Get the template code
+#
+def get_template_code():
+    response = urllib2.urlopen(main_template_file)
+    return response.read()
+
 # Make the given directory
 #
 def make_dir(dir):
@@ -182,7 +188,7 @@ def main():
 
     meta = get_yaml_contents(os.path.join(source_dir, 'meta.yaml'))
     toc = get_yaml_contents(os.path.join(source_dir, 'toc.yaml'))
-    template = read_file(main_template_file)
+    template = get_template_code()
     heading = meta['manual_title']
     contents = []
 
