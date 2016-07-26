@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/unfoldingWord-dev/conv.door43.org.svg?branch=master)](https://travis-ci.org/unfoldingWord-dev/conv.door43.org)
 
+Issue queue at https://github.com/unfoldingWord-dev/door43.org/issues
 
 # conv.door43.org
 
