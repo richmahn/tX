@@ -1,9 +1,9 @@
-master | [![Build Status](https://travis-ci.org/unfoldingWord-dev/conv.door43.org.svg?branch=master)](https://travis-ci.org/unfoldingWord-dev/conv.door43.org)
+[![Build Status](https://travis-ci.org/unfoldingWord-dev/conv.door43.org.svg?branch=master)](https://travis-ci.org/unfoldingWord-dev/conv.door43.org)
 
 
-# conv.door43.org
+# tX
 
-A conversion platform for the [Door43](http://door43.org) website.
+A conversion app for the repos at git.door43.org.  Output ends up at [Door43](http://door43.org).
 This app should:
 
  * accept a webhook notification from Gogs,
