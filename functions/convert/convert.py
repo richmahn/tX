@@ -15,7 +15,7 @@ from subprocess       import Popen, STDOUT, PIPE
 from datetime         import date
 from logging.handlers import RotatingFileHandler
 
-debugLevel = 5
+debugLevel = 3
 
 def myLog( level, msg):
     # micro debug
@@ -171,8 +171,7 @@ except OSError, e:
     print "503"
     sys.exit( 3 )
 
-#try: # Find doctype in template then process per template
-if True:
+try: # Find doctype in template then process per template
     isFound = False
     myLog( "info", "looking for docType: " + docType )
 
@@ -189,8 +188,7 @@ if True:
             except:
                 myLog( "warning", "  Cannot apply tests." )
 
-#            try: # apply transforms from template
-            if True:
+            try: # apply transforms from template
                 for trans in item[ 'transforms' ]:
                     myLog( "debug", "  tool: " + trans[ 'tool' ] )
                     myLog( "debug", "  orgDir: " + orgDir + " current: " + os.getcwd() )
@@ -204,17 +202,16 @@ if True:
                     cmd =  " -s " + src + " -d " + tgt
                     myLog( "info", "cmd: " + tool + " " + cmd )
 
-#                    try:
-                    if True: 
+                    try:
                        res = subprocess.check_output( 
                             [ "python", tool, "-s", src, "-d", tgt ],
                             stderr=subprocess.STDOUT,
                             shell=False )
                        myLog( "debug", 'tool result: ' +  res )
-#                    except OSError, e:
-#                        myLog( "warning", "Cannot run tool: " + tool + " " + cmd + ". Error: " + e.strerror )
-#            except:
-#                myLog( "warning", "  Cannot apply transforms" )
+                    except OSError, e:
+                        myLog( "warning", "Cannot run tool: " + tool + " " + cmd + ". Error: " + e.strerror )
+            except:
+                myLog( "warning", "  Cannot apply transforms" )
 
             isFound = True
             break
@@ -224,10 +221,10 @@ if True:
         print "504"
         sys.exit( 4 )
 
-#except:
-#    myLog( "error", "No support for docType: " + docType )
-#    print "505"
-#    sys.exit( 5 )
+except:
+    myLog( "error", "No support for docType: " + docType )
+    print "505"
+    sys.exit( 5 )
 
 try: # Upload to s3
     myLog( "info", "About to ls" )
